@@ -1,0 +1,7 @@
+name: AreaPlanter
+version: '1.0-SNAPSHOT'
+main: io.github.mrgucci1.areaPlanter.AreaPlanter
+api-version: '1.21'
+load: STARTUP
+authors: [mrgucci1]
+description: Plants 3x3 areas of crops.
