@@ -9,7 +9,15 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Objects;
+
 public final class AreaPlanter extends JavaPlugin implements Listener {
+
+    public AreaPlanter() {
+
+    }
+    private int plantingRadius;
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
@@ -21,19 +29,26 @@ public final class AreaPlanter extends JavaPlugin implements Listener {
         ItemStack heldItem = player.getInventory().getItemInMainHand(); // Or getItemInHand()
 
         if (isValidFarmland(clickedBlock) && isValidSeed(heldItem)) {
-            int seedsUsed = plant3x3Area(clickedBlock, heldItem.getType(), player);
+            int seedsUsed = plantArea(clickedBlock, heldItem.getType(), player);
             consumeSeed(player, seedsUsed);
         }
     }
 
-    private int plant3x3Area(Block centerBlock, Material seedType, Player player) {
+    private int plantArea(Block centerBlock, Material seedType, Player player) {
         int seedsPlanted = 0;
-        int seedsAvailable = player.getInventory().getItemInMainHand().getAmount(); // Or getItemInHand()
+        int seedsAvailable = player.getInventory().getItemInMainHand().getAmount();
 
-        for (int x = -1; x <= 1; x++) {
-            for (int z = -1; z <= 1; z++) {
+        // Calculate the range for the area
+        int minX = -plantingRadius;
+        int maxX = plantingRadius;
+        int minZ = -plantingRadius;
+        int maxZ = plantingRadius;
+
+        for (int x = minX; x <= maxX; x++) {
+            for (int z = minZ; z <= maxZ; z++) {
+                Block blockBelow = centerBlock.getRelative(x, 0, z);
                 Block blockToPlant = centerBlock.getRelative(x, 1, z);
-                if (isValidFarmland(blockToPlant) && seedsPlanted < seedsAvailable) {
+                if (isValidFarmland(blockBelow) && seedsPlanted < seedsAvailable && blockToPlant.getType() == Material.AIR) {
                     blockToPlant.setType(getCropsFromSeed(seedType));
                     seedsPlanted++;
                 }
@@ -80,10 +95,30 @@ public final class AreaPlanter extends JavaPlugin implements Listener {
         }
     }
 
+    public void loadConfig(){
+        saveDefaultConfig();
+        this.plantingRadius = getConfig().getInt("planting-radius", 3);
+    }
+
+    public void setPlantingRadius(int plantingRadius) {
+        getConfig().set("planting-radius", plantingRadius);
+        saveConfig();
+        this.plantingRadius = plantingRadius;
+    }
+
     @Override
     public void onEnable() {
-        getLogger().info("**********AreaPlanter has been enabled!");
+        getLogger().info("\n"+
+                " _____             _____ _         _              _____        _____         _   _       _ \n" +
+                "|  _  |___ ___ ___|  _  | |___ ___| |_ ___ ___   |     |___   |   __|___ ___| |_| |___ _| |\n" +
+                "|     |  _| -_| .'|   __| | .'|   |  _| -_|  _|  |-   -|_ -|  |   __|   | .'| . | | -_| . |\n" +
+                "|__|__|_| |___|__,|__|  |_|__,|_|_|_| |___|_|    |_____|___|  |_____|_|_|__,|___|_|___|___|");
         getServer().getPluginManager().registerEvents(this, this); // Register events
+
+        saveDefaultConfig(); // Create config.yml if it doesn't exist
+        int plantingRadius = getConfig().getInt("planting-radius", 3); // Default to 3 if not set
+        this.plantingRadius = plantingRadius;
+        Objects.requireNonNull(this.getCommand("areaplanter")).setExecutor(new AreaPlanterCommand(this));
     }
 
     @Override

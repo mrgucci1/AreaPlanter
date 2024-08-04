@@ -1,7 +1,17 @@
 name: AreaPlanter
-version: '1.0-SNAPSHOT'
+version: '1.2'
 main: io.github.mrgucci1.areaPlanter.AreaPlanter
 api-version: '1.21'
 load: STARTUP
 authors: [mrgucci1]
-description: Plants 3x3 areas of crops.
+description: Plants configurable areas of crops.
+commands:
+  areaplanter:
+    description: Main command for AreaPlanter plugin
+    aliases: [ap]
+    usage: /areaplanter <enable|disable|radius>
+    permission: areaplanter.admin
+    permission-message: You do not have permission to use this command.
+permissions:
+  areaplanter.admin:
+    default: op
