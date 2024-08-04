@@ -118,7 +118,6 @@ public final class AreaPlanter extends JavaPlugin implements Listener {
         saveDefaultConfig(); // Create config.yml if it doesn't exist
         int plantingRadius = getConfig().getInt("planting-radius", 3); // Default to 3 if not set
         this.plantingRadius = plantingRadius;
-        Objects.requireNonNull(this.getCommand("areaplanter")).setExecutor(new AreaPlanterCommand(this));
     }
 
     @Override
