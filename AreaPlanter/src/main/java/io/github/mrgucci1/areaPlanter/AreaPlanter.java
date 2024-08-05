@@ -38,14 +38,11 @@ public final class AreaPlanter extends JavaPlugin implements Listener {
         int seedsPlanted = 0;
         int seedsAvailable = player.getInventory().getItemInMainHand().getAmount();
 
-        // Calculate the range for the area
-        int minX = -plantingRadius;
-        int maxX = plantingRadius;
-        int minZ = -plantingRadius;
-        int maxZ = plantingRadius;
+        // Calculate the distance the planted crops will travel from the center block
+        int distanceFromCenter = plantingRadius / 2;
 
-        for (int x = minX; x <= maxX; x++) {
-            for (int z = minZ; z <= maxZ; z++) {
+        for (int x = -distanceFromCenter; x <= distanceFromCenter; x++) {
+            for (int z = -distanceFromCenter; z <= distanceFromCenter; z++) {
                 Block blockBelow = centerBlock.getRelative(x, 0, z);
                 Block blockToPlant = centerBlock.getRelative(x, 1, z);
                 if (isValidFarmland(blockBelow) && seedsPlanted < seedsAvailable && blockToPlant.getType() == Material.AIR) {

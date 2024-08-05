@@ -5,13 +5,6 @@ api-version: '1.21'
 load: STARTUP
 authors: [mrgucci1]
 description: Plants configurable areas of crops.
-commands:
-  areaplanter:
-    description: Main command for AreaPlanter plugin
-    aliases: [ap]
-    usage: /areaplanter <enable|disable|radius>
-    permission: areaplanter.admin
-    permission-message: You do not have permission to use this command.
 permissions:
   areaplanter.admin:
     default: op
