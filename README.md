@@ -10,7 +10,7 @@ AreaPlanter is a Bukkit/Spigot/Paper plugin that enhances the farming experience
 ## Features
 
 * **Area Planting:** Right-click on farmland with seeds to plant crops in a configurable area around the clicked block.
-* **Customizable Radius:** Server admins can easily adjust the planting radius using the `/areaplanter radius` command or by editing the `config.yml` file.
+* **Customizable Radius:** Server admins can easily adjust the planting radius by editing the `config.yml` file.
 * **Seed Efficiency:** The plugin consumes only the necessary number of seeds based on the actual planting area and available farmland.
 * **Vanilla Seed Support:** Supports all vanilla Minecraft seeds that can be planted on farmland.
 
