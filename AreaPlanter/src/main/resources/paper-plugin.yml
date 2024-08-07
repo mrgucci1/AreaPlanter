@@ -1,5 +1,5 @@
 name: AreaPlanter
-version: '1.2'
+version: '1.3'
 main: io.github.mrgucci1.areaPlanter.AreaPlanter
 api-version: '1.21'
 load: STARTUP

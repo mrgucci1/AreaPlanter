@@ -18,6 +18,8 @@ public final class AreaPlanter extends JavaPlugin implements Listener {
 
     }
     private int plantingRadius;
+    private boolean consumeFromInventoryFirst;
+
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
@@ -81,7 +83,15 @@ public final class AreaPlanter extends JavaPlugin implements Listener {
     }
 
     private void consumeSeed(Player player, int seedsUsed) {
-        ItemStack heldItem = player.getInventory().getItemInMainHand(); // Or getItemInHand()
+        if (consumeFromInventoryFirst) {
+            consumeSeedFromInventoryFirst(player, seedsUsed);
+        } else {
+            consumeSeedFromHand(player, seedsUsed);
+        }
+    }
+
+    private void consumeSeedFromHand(Player player, int seedsUsed) {
+        ItemStack heldItem = player.getInventory().getItemInMainHand();
 
         if (heldItem.getAmount() <= seedsUsed) {
             // Player doesn't have enough seeds, so clear the item from their hand
@@ -92,15 +102,51 @@ public final class AreaPlanter extends JavaPlugin implements Listener {
         }
     }
 
-    public void loadConfig(){
-        saveDefaultConfig();
-        this.plantingRadius = getConfig().getInt("planting-radius", 3);
-    }
+    private void consumeSeedFromInventoryFirst(Player player, int seedsUsed) {
+        ItemStack heldItem = player.getInventory().getItemInMainHand();
+        Material seedType = heldItem.getType();
 
-    public void setPlantingRadius(int plantingRadius) {
-        getConfig().set("planting-radius", plantingRadius);
-        saveConfig();
-        this.plantingRadius = plantingRadius;
+        // 1. Check inventory for matching seeds
+        int seedsFoundInInventory = 0;
+        for (int i = 0; i < player.getInventory().getSize(); i++) {
+            ItemStack item = player.getInventory().getItem(i);
+            if (item != null && item.getType() == seedType && i != player.getInventory().getHeldItemSlot()) { // Exclude the hand slot
+                seedsFoundInInventory += item.getAmount();
+            }
+        }
+
+        // 2. Calculate how many seeds to consume from hand vs. inventory
+        int seedsToConsumeFromHand = Math.max(0, seedsUsed - seedsFoundInInventory);
+        int seedsToConsumeFromInventory = seedsUsed - seedsToConsumeFromHand;
+
+        // 3. Consume seeds from inventory
+        if (seedsToConsumeFromInventory > 0) {
+            for (int i = 0; i < player.getInventory().getSize(); i++) {
+                ItemStack item = player.getInventory().getItem(i);
+                if (item != null && item.getType() == seedType && i != player.getInventory().getHeldItemSlot()) {
+                    int amountToRemove = Math.min(item.getAmount(), seedsToConsumeFromInventory);
+
+                    if (amountToRemove == item.getAmount()) {
+                        player.getInventory().setItem(i, null); // Remove the entire stack if it's fully consumed
+                    } else {
+                        item.setAmount(item.getAmount() - amountToRemove);
+                    }
+
+                    seedsToConsumeFromInventory -= amountToRemove;
+                    if (seedsToConsumeFromInventory == 0) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (seedsToConsumeFromHand > 0) {
+            if (heldItem.getAmount() <= seedsToConsumeFromHand) {
+                player.getInventory().setItemInMainHand(null);
+            } else {
+                heldItem.setAmount(heldItem.getAmount() - seedsToConsumeFromHand);
+            }
+        }
     }
 
     @Override
@@ -114,6 +160,7 @@ public final class AreaPlanter extends JavaPlugin implements Listener {
 
         saveDefaultConfig(); // Create config.yml if it doesn't exist
         int plantingRadius = getConfig().getInt("planting-radius", 3); // Default to 3 if not set
+        this.consumeFromInventoryFirst = getConfig().getBoolean("consume-from-inventory-first", true);
         this.plantingRadius = plantingRadius;
     }
 
