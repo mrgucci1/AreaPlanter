@@ -13,25 +13,29 @@ AreaPlanter is a Bukkit/Spigot/Paper plugin that enhances the farming experience
 * **Customizable Radius:** Server admins can easily adjust the planting radius by editing the `config.yml` file.
 * **Seed Efficiency:** The plugin consumes only the necessary number of seeds based on the actual planting area and available farmland.
 * **Vanilla Seed Support:** Supports all vanilla Minecraft seeds that can be planted on farmland.
+* **Prioritized Seed Consumption:**  **Seeds are consumed from the player's inventory first, preserving the stack in their hand whenever possible.** 
 
 ## Installation
 
 1. **Download:** Download the latest `AreaPlanter.jar` file from the TBA page.
 2. **Install:** Place the `AreaPlanter.jar` file into your server's `plugins` folder.
 3. **Start/Reload:** Start or reload your server to enable the plugin.
-4. **Configure:**  Adjust the planting radius in the generated `config.yml` file within the `plugins/AreaPlanter` folder.
+4. **Configure:**  Adjust the planting radius and seed consumption behavior in the generated `config.yml` file within the `plugins/AreaPlanter` folder.
 
 ## Configuration
 
 The `config.yml` file in the `plugins/AreaPlanter` folder allows you to customize the plugin's behavior:
 
-* **planting-radius:**  Sets the default planting radius (default: 3). Make sure to use an odd number to ensure a central planting block.
+* **planting-radius:**  Sets the default planting radius (default: 3). Make sure to use an odd number to ensure a central planting block.
+* **consume-from-inventory-first:**  Enables or disables prioritizing seed consumption from the inventory (default: `true`).
 
 ## How it Works
 
 1. **Right-Click:** When a player right-clicks on farmland with seeds in their hand, the plugin checks the surrounding area based on the configured radius.
 2. **Planting:** If there's enough farmland and seeds available, the plugin plants crops around the clicked block.
-3. **Seed Consumption:** The plugin consumes the exact number of seeds used for planting, even if the entire area isn't filled due to obstacles or lack of seeds.
+3. **Seed Consumption:** 
+    * If `consume-from-inventory-first` is enabled, the plugin will first attempt to consume seeds from the player's inventory, leaving the stack in their hand intact if possible. 
+    * Otherwise, it will consume seeds directly from the player's hand.
 
 ## Contributing
 
