@@ -17,7 +17,7 @@ AreaPlanter is a Bukkit/Spigot/Paper plugin that enhances the farming experience
 
 ## Installation
 
-1. **Download:** Download the latest `AreaPlanter.jar` file from the TBA page.
+1. **Download:** Download the latest `AreaPlanter.jar` file from the releases page.
 2. **Install:** Place the `AreaPlanter.jar` file into your server's `plugins` folder.
 3. **Start/Reload:** Start or reload your server to enable the plugin.
 4. **Configure:**  Adjust the planting radius and seed consumption behavior in the generated `config.yml` file within the `plugins/AreaPlanter` folder.
