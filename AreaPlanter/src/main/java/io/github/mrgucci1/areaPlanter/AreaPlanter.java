@@ -1,5 +1,6 @@
 package io.github.mrgucci1.areaPlanter;
 
+import org.bukkit.Sound;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -31,14 +32,25 @@ public final class AreaPlanter extends JavaPlugin implements Listener {
         ItemStack heldItem = player.getInventory().getItemInMainHand(); // Or getItemInHand()
 
         if (isValidFarmland(clickedBlock) && isValidSeed(heldItem)) {
+            event.setCancelled(true);
+            player.playSound(player.getLocation(), Sound.ITEM_CROP_PLANT, 1.0f, 1.0f); // Adjust sound and volume as needed
             int seedsUsed = plantArea(clickedBlock, heldItem.getType(), player);
+            player.swingMainHand();
             consumeSeed(player, seedsUsed);
         }
     }
 
     private int plantArea(Block centerBlock, Material seedType, Player player) {
         int seedsPlanted = 0;
-        int seedsAvailable = player.getInventory().getItemInMainHand().getAmount();
+        // Calculate the total number of seeds available (hand + inventory)
+        int seedsInHand = player.getInventory().getItemInMainHand().getAmount();
+        int seedsInInventory = 0;
+        for (ItemStack item : player.getInventory().getContents()) {
+            if (item != null && item.getType() == seedType) {
+                seedsInInventory += item.getAmount();
+            }
+        }
+        int totalSeedsAvailable = seedsInHand + seedsInInventory;
 
         // Calculate the distance the planted crops will travel from the center block
         int distanceFromCenter = plantingRadius / 2;
@@ -47,7 +59,7 @@ public final class AreaPlanter extends JavaPlugin implements Listener {
             for (int z = -distanceFromCenter; z <= distanceFromCenter; z++) {
                 Block blockBelow = centerBlock.getRelative(x, 0, z);
                 Block blockToPlant = centerBlock.getRelative(x, 1, z);
-                if (isValidFarmland(blockBelow) && seedsPlanted < seedsAvailable && blockToPlant.getType() == Material.AIR) {
+                if (isValidFarmland(blockBelow) && seedsPlanted < totalSeedsAvailable && blockToPlant.getType() == Material.AIR) {
                     blockToPlant.setType(getCropsFromSeed(seedType));
                     seedsPlanted++;
                 }
