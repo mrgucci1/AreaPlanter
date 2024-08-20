@@ -12,8 +12,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Objects;
-
 public final class AreaPlanter extends JavaPlugin implements Listener {
 
     public AreaPlanter() {
@@ -58,12 +56,15 @@ public final class AreaPlanter extends JavaPlugin implements Listener {
         }
 
         // Calculate the distance the planted crops will travel from the center block
-        int distanceFromCenter = plantingRadius / 2;
+        double inventorySqrt = Math.sqrt(seedsInInventory);
+        double distanceFromCenter = Math.min(inventorySqrt, plantingRadius) / 2.0;
 
-        for (int x = -distanceFromCenter; x <= distanceFromCenter; x++) {
-            for (int z = -distanceFromCenter; z <= distanceFromCenter; z++) {
-                Block blockBelow = centerBlock.getRelative(x, 0, z);
-                Block blockToPlant = centerBlock.getRelative(x, 1, z);
+        for (double x = -distanceFromCenter; x <= distanceFromCenter; x += 1) {
+            for (double z = -distanceFromCenter; z <= distanceFromCenter; z += 1) {
+                int placeX = (int) x;
+                int placeZ = (int) z;
+                Block blockBelow = centerBlock.getRelative(placeX, 0, placeZ);
+                Block blockToPlant = centerBlock.getRelative(placeX, 1, placeZ);
                 if (isValidFarmland(blockBelow) && seedsPlanted < seedsInInventory && blockToPlant.getType() == Material.AIR) {
                     blockToPlant.setType(getCropsFromSeed(seedType));
                     seedsPlanted++;
