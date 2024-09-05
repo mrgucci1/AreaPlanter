@@ -57,11 +57,11 @@ public final class AreaPlanter extends JavaPlugin implements Listener {
         }
 
         double distanceFromCenter;
-        if(autoReducePlantingRadius){
+        if (autoReducePlantingRadius) {
             // Calculate the distance the planted crops will travel from the center block
             double inventorySqrt = Math.sqrt(seedsInInventory);
             distanceFromCenter = Math.min(inventorySqrt, plantingRadius) / 2.0;
-        }else {
+        } else {
             distanceFromCenter = plantingRadius / 2.0;
         }
 
