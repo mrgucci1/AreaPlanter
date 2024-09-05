@@ -18,6 +18,7 @@ public final class AreaPlanter extends JavaPlugin implements Listener {
 
     }
     private int plantingRadius;
+    private boolean autoReducePlantingRadius;
     private boolean consumeFromInventoryFirst;
 
 
@@ -55,9 +56,14 @@ public final class AreaPlanter extends JavaPlugin implements Listener {
             }
         }
 
-        // Calculate the distance the planted crops will travel from the center block
-        double inventorySqrt = Math.sqrt(seedsInInventory);
-        double distanceFromCenter = Math.min(inventorySqrt, plantingRadius) / 2.0;
+        double distanceFromCenter;
+        if(autoReducePlantingRadius){
+            // Calculate the distance the planted crops will travel from the center block
+            double inventorySqrt = Math.sqrt(seedsInInventory);
+            distanceFromCenter = Math.min(inventorySqrt, plantingRadius) / 2.0;
+        }else {
+            distanceFromCenter = plantingRadius / 2.0;
+        }
 
         for (double x = -distanceFromCenter; x <= distanceFromCenter; x += 1) {
             for (double z = -distanceFromCenter; z <= distanceFromCenter; z += 1) {
@@ -178,6 +184,7 @@ public final class AreaPlanter extends JavaPlugin implements Listener {
 
         saveDefaultConfig(); // Create config.yml if it doesn't exist
         int plantingRadius = getConfig().getInt("planting-radius", 3); // Default to 3 if not set
+        this.autoReducePlantingRadius = getConfig().getBoolean("auto-reduce-planting-radius", true);
         this.consumeFromInventoryFirst = getConfig().getBoolean("consume-from-inventory-first", true);
         this.plantingRadius = plantingRadius;
     }
