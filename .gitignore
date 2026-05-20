@@ -1,3 +1,14 @@
+# IDE
+.idea/
+
+# Build output
+bin/
+build/
+
+# Gradle
+.gradle/
+gradle.properties
+
 # Compiled class file
 *.class
 
