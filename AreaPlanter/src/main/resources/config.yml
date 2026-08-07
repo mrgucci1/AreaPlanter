@@ -1,3 +1,4 @@
 #AreaPlanter
 planting-radius: 3
+auto-reduce-planting-radius: true
 consume-from-inventory-first: true
